@@ -1,96 +1,142 @@
-const percentageSign = "%";
-const minusSign = "-";
-const equalsSign = "=";
-const plusMinusSign = "+/-";
-let result;
+// { calculate } import './calculator';
 
-function clearResult() {
-  result = undefined;
+// TODO: Faire la manipulation du DOM dans ce fichier
+
+const buttonsObject = [...document.querySelectorAll("button")];
+const buttons = buttonsObject.map(button => button.textContent);
+const display = document.getElementById("calcul");
+const dot = document.querySelector(".dot");
+const input = document.getElementById("input");
+const signesId = ["divideby", "times", "minus", "plus"]
+const signesObject = [];
+signesId.forEach(signe => {
+    signesObject.push(document.getElementById(signe));
+});
+const signes = signesObject.map(signe => signe.textContent);
+
+plus.addEventListener("click", e => e.preventDefault());
+minus.addEventListener("click", e => e.preventDefault());
+times.addEventListener("click", e => e.preventDefault());
+divideby.addEventListener("click", e => e.preventDefault());
+equals.addEventListener("click", e => e.preventDefault());
+percentage.addEventListener("click", e => e.preventDefault());
+display.textContent = "";
+
+function clickBtn(btn) {
+    btn.addEventListener("click", (e) => {
+        const value = e.target.textContent;
+        operation(value);
+    })
 }
 
-function cleanExpression(expression) {
-  return expression
-    .replace(/÷/g, "/")
-    .replace(/×/g, "*")
-    .replace(/x/g, "*")
-    .replace(/X/g, "*")
-    .replace(/\s/g, "")
-    .replace(/%/g, " / 100");
-}
+let inputArray = [];
+const displayScreen = [];
+let evalOperation;
+let inputArrayJoin;
 
-function calculate(expression) {
-  try {
-    return eval(cleanExpression(expression));
-  } catch (error) {
-    form.reset();
-    clearResult();
-    label.textContent = "";
-    console.log(error);
-  }
-}
+buttonsObject.forEach(b => clickBtn(b));
+buttonsObject.forEach(btn => clear(btn));
+function operation(value) {
+    switch (value) {
+        case "AC":
+            display.textContent = "";
+            input.value = "";
+            inputArray.splice(0);
+            console.log(inputArray);
+            displayScreen.splice(0);
+            break;
+        case "=":
+            const calcul = eval(inputArrayJoin);
+            evalOperation = eval(evalOperation);
+            console.log(evalOperation);
+            input.value = "";
+            display.textContent = `${evalOperation} = ${evalOperation}  |    `;
+            input.value = "";
+            inputArray.splice(0);
+            displayScreen.splice(0);
+            console.log(evalOperation);
+            dot.hidden = false;
+            break;
+        case "+/-":
+            del(value);
+            break;
+        case "%":
+            pourcentage(evalOperation);
+            console.log(evalOperation);
+            display.textContent = `${evalOperation} | `;
+            displayScreen.splice(0);
+            displayScreen.textContent = "";
+            break;
+        case "C":
+            del(value);
+            break;
+        default:
+            if (value === "×") {
+                value = "*";
+            } else if (value === "÷") {
+                value = "/";
+            } else {
+                value = value;
+            }
+            displayScreen.push(value);
+            console.log(displayScreen);
+            evalOperation = displayScreen.join("");
 
-function handleEqualsClick(label, userInput) {
-  if (!result) {
-    if (userInput.value) {
-      label.textContent = `${label.textContent} ${userInput.value}`;
-      result = calculate(label.textContent);
-      userInput.value = result;
+            inputArray.push(value);
+            inputArrayJoin = inputArray.join("");
+            input.value = inputArrayJoin;
+            if (value === "*") {
+                value = "×";
+            } else if (value === "/") {
+                value = "÷";
+            }
+            display.textContent += ` ${value} `;
+
+            if (inputArrayJoin.includes(".")) {
+                // console.log("ok");
+                // dot.style.display = "none";
+            }
+            if (input.value === "") {
+                dot.hidden = false;
+            }
     }
-  } else {
-    label.textContent = result;
-  }
 }
 
-function handlePercentageClick(userInput, label) {
-  if (userInput.value) {
-    label.textContent = `${label.textContent} ${userInput.value} %`;
-    result = userInput.value / 100;
-    userInput.value = result;
-  }
+function del(value) {
+    if (value === "C") {
+        displayScreen.pop();
+        // input.value = input.value.slice(0, -1);
+        display.textContent = displayScreen.join("");
+        // console.log(displayScreen);
+        console.log(displayScreen);
+    } return input.value;
 }
+function plusOuMoins(value) {
+    if (value === "+/-") {
 
-function handleMinusClick(userInput) {
-  userInput.value = minusSign;
-}
-
-function handleOtherOperatorsClick(operator, userInput, label) {
-  if (userInput.value) {
-    const expression = result
-      ? `${label.textContent} ${operator}`
-      : `${label.textContent} ${userInput.value} ${operator}`;
-    result = result && undefined;
-    label.textContent = expression;
-    userInput.value = "";
-  } else {
-    if (operator === minusSign) {
-      handleMinusClick(userInput);
     }
-  }
 }
 
-function handleResetClick(label, form) {
-  label.innerHTML = "";
-  form.reset();
+function pourcentage(value) {
+    evalOperation = evalOperation / 100;
+    return evalOperation;
 }
 
-function handleButtonClick(textContent, userInput) {
-  if (textContent === plusMinusSign) {
-    userInput.value = +userInput.value * -1;
-  } else {
-    userInput.value = `${userInput.value}${textContent}`;
-  }
-}
+window.addEventListener('error', e => {
+    alert(`Votre calcul contient une erreur !`)
+    console.log(e);
+});
+// window.addEventListener('mousedown', e => {
+//     // del(input.value);
+//     input.value = "";
+//     inputArray.splice(0);
+//     // input.value = e.target;
+//     // input.value = ""
+// });
 
-export {
-  percentageSign,
-  equalsSign,
-  minusSign,
-  cleanExpression,
-  handleEqualsClick,
-  handlePercentageClick,
-  handleMinusClick,
-  handleOtherOperatorsClick,
-  handleResetClick,
-  handleButtonClick,
-  clearResult,
-};
+function clear(btn) {
+    btn.addEventListener("mousedown", e => {
+        input.value = "";
+        inputArray.splice(0);
+    })
+}
