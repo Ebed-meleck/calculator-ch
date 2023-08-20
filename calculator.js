@@ -50,7 +50,6 @@ function operation(value) {
             evalOperation = eval(evalOperation);
             console.log(evalOperation);
             input.value = "";
-            display.textContent = `${evalOperation} = ${evalOperation}  |    `;
             input.value = "";
             inputArray.splice(0);
             displayScreen.splice(0);
